@@ -116,7 +116,14 @@
         <input type="text" id="username2" name="username" required>
         <button type="submit">Close Roblox</button>
     </form>
-
+    <h2>launch-roblox</h2>
+    <form id="launch-roblox-form">
+        <label for="Private Server Link">Private Server Link:</label>
+        <input type="text" id="ps_link" name="Private Server Link" required>
+        <label for="packagename">packagename:</label>
+        <input type="text" id="package" name="package name" required>
+        <button type="submit">launch Roblox</button>
+    </form>
     <button onclick="fetchUserData()">Refresh</button>
 
     <div id="error-message" class="error-message"></div>
@@ -268,9 +275,50 @@
             }
         }
 
+        async function launch(event) {
+            event.preventDefault();
+
+            const backendUrl = document.getElementById('backend-url').value.trim();
+            const private_server_link = document.getElementById('ps_link').value.trim();
+            const packagename = document.getElementById('package').value.trim();
+            if (!backendUrl) {
+                displayErrorMessage('Please enter the backend URL');
+                return;
+            }
+
+            if (!private_server_link) {
+                displayErrorMessage('Please enter the private_server_link');
+                return;
+            }
+            if (!packagename) {
+                displayErrorMessage('please enter packagename');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/launch`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ backendUrl, private_server_link, packagename }),
+                });
+
+                const result = await response.json();
+                alert(result.message || result.error);
+
+                if (response.ok) {
+                    fetchUserData();  
+                }
+            } catch (error) {
+                console.error('Error closing user:', error);
+                displayErrorMessage('Error closing user. Please try again.');
+            }
+        }
         document.getElementById('remove-user-form').addEventListener('submit', removeUser);
         document.getElementById('rejoin-user-form').addEventListener('submit', RejoinUser);
         document.getElementById('close-user-form').addEventListener('submit', CloseUser);
+        document.getElementById('launch-roblox-form').addEventListener('submit', launch);
 
         document.getElementById('backend-url-form').addEventListener('submit', function(event) {
             event.preventDefault();
