@@ -28,6 +28,22 @@ app.get('/userdata', async (req, res) => {
     }
 });
 
+app.post('/launch', async (req, res) => {
+    const { backendUrl, private_server_link, packagename } = req.body;
+    if (!backendUrl || !private_server_link || !packagename) {
+        console.log('Missing parameters:', req.body);
+        return res.status(400).json({ error: 'Backend URL and PS_Link and packagename are required' });
+    }
+    console.log(packagename)
+    try {
+        const response = await axios.post(`${backendUrl}/launchroblox`, { private_server_link, packagename});
+        res.json(response.data);
+    } catch (error) {
+        console.error('Error removing user:', error);
+        res.status(500).send('Error removing user');
+    }
+});
+
 app.post('/rejoin', async (req, res) => {
     const { backendUrl, username } = req.body;
     if (!backendUrl || !username) {
