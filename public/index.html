@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staryuu Rejoin Control</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        /* Form and input styles */
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        input[type="text"], button {
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="text"] {
+            width: 300px;
+            margin-right: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        /* Error message */
+        .error-message {
+            color: #ff3333;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>User Data</h1>
+
+    <form id="backend-url-form">
+        <label for="backend-url">Backend URL:</label>
+        <input type="text" id="backend-url" placeholder="Enter your backend URL" required>
+        <button type="submit">Save Backend URL</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Last Update</th>
+            </tr>
+        </thead>
+        <tbody id="user-data">
+        </tbody>
+    </table>
+
+    <h2>Remove User</h2>
+    <form id="remove-user-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <button type="submit">Remove User</button>
+    </form>
+    <h2>Rejoin User</h2>
+    <form id="rejoin-user-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username1" name="username" required>
+        <button type="submit">Rejoin</button>
+    </form>
+    <h2>close roblox User</h2>
+    <form id="close-user-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username2" name="username" required>
+        <button type="submit">Close Roblox</button>
+    </form>
+
+    <button onclick="fetchUserData()">Refresh</button>
+
+    <div id="error-message" class="error-message"></div>
+
+    <script>
+        async function fetchUserData() {
+            const backendUrl = document.getElementById('backend-url').value.trim();
+            if (!backendUrl) {
+                displayErrorMessage('Please enter the backend URL');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/userdata?backendUrl=${encodeURIComponent(backendUrl)}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user data');
+                }
+                const data = await response.json();
+                const tbody = document.getElementById('user-data');
+                tbody.innerHTML = '';
+
+                for (const username in data) {
+                    const user = data[username];
+                    const row = document.createElement('tr');
+                    const usernameCell = document.createElement('td');
+                    usernameCell.textContent = username;
+                    row.appendChild(usernameCell);
+
+                    const lastUpdateCell = document.createElement('td');
+                    lastUpdateCell.textContent = user.last_update;
+                    row.appendChild(lastUpdateCell);
+
+                    tbody.appendChild(row);
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                displayErrorMessage('Error fetching user data. Please try again.');
+            }
+        }
+
+        async function removeUser(event) {
+            event.preventDefault();
+
+            const backendUrl = document.getElementById('backend-url').value.trim();
+            const username = document.getElementById('username').value.trim();
+
+            if (!backendUrl) {
+                displayErrorMessage('Please enter the backend URL');
+                return;
+            }
+
+            if (!username) {
+                displayErrorMessage('Please enter the username');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/removeuser`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, backendUrl }),
+                });
+
+                const result = await response.json();
+                alert(result.message || result.error);
+
+                if (response.ok) {
+                    fetchUserData();  
+                }
+            } catch (error) {
+                console.error('Error removing user:', error);
+                displayErrorMessage('Error removing user. Please try again.');
+            }
+        }
+
+        async function RejoinUser(event) {
+            event.preventDefault();
+
+            const backendUrl = document.getElementById('backend-url').value.trim();
+            const username = document.getElementById('username1').value.trim();
+
+            if (!backendUrl) {
+                displayErrorMessage('Please enter the backend URL');
+                return;
+            }
+
+            if (!username) {
+                displayErrorMessage('Please enter the username');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/rejoin`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, backendUrl }),
+                });
+
+                const result = await response.json();
+                alert(result.message || result.error);
+
+                if (response.ok) {
+                    fetchUserData();  
+                }
+            } catch (error) {
+                console.error('Error rejoin user:', error);
+                displayErrorMessage('Error rejoin user. Please try again.');
+            }
+        }
+
+        async function CloseUser(event) {
+            event.preventDefault();
+
+            const backendUrl = document.getElementById('backend-url').value.trim();
+            const username = document.getElementById('username2').value.trim();
+
+            if (!backendUrl) {
+                displayErrorMessage('Please enter the backend URL');
+                return;
+            }
+
+            if (!username) {
+                displayErrorMessage('Please enter the username');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/close`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, backendUrl }),
+                });
+
+                const result = await response.json();
+                alert(result.message || result.error);
+
+                if (response.ok) {
+                    fetchUserData();  
+                }
+            } catch (error) {
+                console.error('Error closing user:', error);
+                displayErrorMessage('Error closing user. Please try again.');
+            }
+        }
+
+        document.getElementById('remove-user-form').addEventListener('submit', removeUser);
+        document.getElementById('rejoin-user-form').addEventListener('submit', RejoinUser);
+        document.getElementById('close-user-form').addEventListener('submit', CloseUser);
+
+        document.getElementById('backend-url-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const backendUrl = document.getElementById('backend-url').value.trim();
+            localStorage.setItem('backendUrl', backendUrl);
+            alert(`Backend URL saved: ${backendUrl}`);
+        });
+
+        // Load saved backend URL if available
+        const savedBackendUrl = localStorage.getItem('backendUrl');
+        if (savedBackendUrl) {
+            document.getElementById('backend-url').value = savedBackendUrl;
+        }
+
+        function displayErrorMessage(message) {
+            const errorMessageElement = document.getElementById('error-message');
+            errorMessageElement.textContent = message;
+        }
+    </script>
+</body>
+</html>
