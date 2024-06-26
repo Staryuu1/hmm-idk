@@ -92,6 +92,7 @@
             <tr>
                 <th>Username</th>
                 <th>Last Update</th>
+                <th>package name</th>
             </tr>
         </thead>
         <tbody id="user-data">
@@ -155,6 +156,10 @@
                     const lastUpdateCell = document.createElement('td');
                     lastUpdateCell.textContent = user.last_update;
                     row.appendChild(lastUpdateCell);
+
+                    const clientCell = document.createElement('td')
+                    clientCell.textContent = user.packagename
+                    row.appendChild(clientCell)
 
                     tbody.appendChild(row);
                 }
