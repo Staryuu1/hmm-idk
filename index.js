@@ -14,7 +14,8 @@ app.get('/', (req, res) => {
 
 // Route to get user data from user-specified backend URL
 app.get('/userdata', async (req, res) => {
-    const backendUrl = req.query.backendUrl;
+    let backendUrl = req.query.backendUrl;
+    backendUrl = backendUrl.replace('https', 'http').replace(/\/$/, '');
     if (!backendUrl) {
         return res.status(400).json({ error: 'Backend URL is required' });
     }
@@ -29,7 +30,8 @@ app.get('/userdata', async (req, res) => {
 });
 
 app.post('/launch', async (req, res) => {
-    const { backendUrl, private_server_link, packagename } = req.body;
+    let { backendUrl, private_server_link, packagename } = req.body;
+    backendUrl = backendUrl.replace('https', 'http').replace(/\/$/, '');
     if (!backendUrl || !private_server_link || !packagename) {
         console.log('Missing parameters:', req.body);
         return res.status(400).json({ error: 'Backend URL and PS_Link and packagename are required' });
@@ -45,7 +47,8 @@ app.post('/launch', async (req, res) => {
 });
 
 app.post('/rejoin', async (req, res) => {
-    const { backendUrl, username } = req.body;
+    let { backendUrl, username } = req.body;
+    backendUrl = backendUrl.replace('https', 'http').replace(/\/$/, '');
     if (!backendUrl || !username) {
         return res.status(400).json({ error: 'Backend URL and username are required' });
     }
@@ -60,7 +63,8 @@ app.post('/rejoin', async (req, res) => {
 });
 
 app.post('/close', async (req, res) => {
-    const { backendUrl, username } = req.body;
+    let { backendUrl, username } = req.body;
+    backendUrl = backendUrl.replace('https', 'http').replace(/\/$/, '');
     if (!backendUrl || !username) {
         return res.status(400).json({ error: 'Backend URL and username are required' });
     }
@@ -75,7 +79,8 @@ app.post('/close', async (req, res) => {
 });
 
 app.post('/removeuser', async (req, res) => {
-    const { backendUrl, username } = req.body;
+    let { backendUrl, username } = req.body;
+    backendUrl = backendUrl.replace('https', 'http').replace(/\/$/, '');
     if (!backendUrl || !username) {
         return res.status(400).json({ error: 'Backend URL and username are required' });
     }
