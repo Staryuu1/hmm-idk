@@ -93,6 +93,7 @@
                 <th>Username</th>
                 <th>Last Update</th>
                 <th>package name</th>
+                <th>Crash Count</th>
             </tr>
         </thead>
         <tbody id="user-data">
@@ -157,9 +158,13 @@
                     lastUpdateCell.textContent = user.last_update;
                     row.appendChild(lastUpdateCell);
 
-                    const clientCell = document.createElement('td')
-                    clientCell.textContent = user.packagename
-                    row.appendChild(clientCell)
+                    const clientCell = document.createElement('td');
+                    clientCell.textContent = user.packagename;
+                    row.appendChild(clientCell);
+
+                    const crashcount = document.createElement('td');
+                    crashcount.textContent = user.cc;
+                    row.appendChild(crashcount);
 
                     tbody.appendChild(row);
                 }
